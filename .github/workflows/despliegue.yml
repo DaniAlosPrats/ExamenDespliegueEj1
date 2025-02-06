@@ -28,7 +28,7 @@ jobs:
           echo "Listing files in the root directory:"
           ls -la
 
-          echo "Listing files in the test directory:"
+          echo "Listing files in the tests directory:"
           ls -la test  # Cambio a 'test' en lugar de 'tests'
 
       - name: Check if PHPUnit is installed
@@ -41,11 +41,11 @@ jobs:
           fi
 
       - name: Run tests
-        run: ./vendor/bin/phpunit test || ./vendor/bin/phpunit  # Cambio a 'test' en lugar de 'tests'
+        run: ./vendor/bin/phpunit tests || ./vendor/bin/phpunit  # Cambio a 'test' en lugar de 'tests'
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test
+    needs: tests
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -78,7 +78,7 @@ jobs:
           ssh $USERNAME@$HOST "mkdir -p $DEPLOY_PATH"
 
           # Sincronizar archivos con el servidor
-          rsync -avz --delete --exclude 'test' --exclude '.git' . $USERNAME@$HOST:$DEPLOY_PATH
+          rsync -avz --delete --exclude 'tests' --exclude '.git' . $USERNAME@$HOST:$DEPLOY_PATH
 
           # Ejecutar Composer install en el servidor
           ssh $USERNAME@$HOST "cd $DEPLOY_PATH && composer install --no-dev --optimize-autoloader"
